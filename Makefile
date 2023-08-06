@@ -1,4 +1,4 @@
-.PHONY: default inventory ssh bootstrap
+.PHONY: default inventory bootstrap
 
 host := $(shell terraform output -json instance_public_dns | jq -r '.[]')
 
