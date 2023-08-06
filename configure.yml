@@ -1,0 +1,93 @@
+---
+- hosts: all
+  become: yes
+  become_method: su
+  gather_facts: no
+  # hackery to cater for different python on host where ansible is running
+  # versus target (inventory) host
+  vars:
+    - ansible_play_python: "{{ '/usr/bin/env python3' }}"
+  
+  tasks:
+    - name: Wait for SSH access
+      ansible.builtin.wait_for:
+        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        search_regex: OpenSSH
+        port: 22
+      vars:
+        ansible_connection: local
+        ansible_python_interpreter: "{{ ansible_play_python }}"
+      become: no
+  
+    - name: Gather facts
+      setup:
+  
+    - name: Save space on BSD
+      file:
+        path: /usr/lib/debug
+        state: absent
+      when: ansible_os_family == 'FreeBSD'
+
+    - name: Ensure packages installed
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ packages }}"
+      tags: pkgs
+  
+    - name: Set shell for default user
+      user:
+        name: ec2-user
+        shell: '/usr/local/bin/zsh'
+
+    - name: Some useful shell aliases
+      copy:
+        src: files/aliases.zsh
+        dest: /usr/local/etc/zshrc
+        owner: root
+        group: wheel
+        mode: 0644
+
+    - name: Configuring ohmyzsh for default user
+      block:
+      - name: Install ohmyzsh
+        shell:
+          cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+          creates: $HOME/.oh-my-zsh
+
+      - name: Customise ohmyzsh
+        lineinfile:
+          path: "$HOME/.zshrc"
+          regexp: "^{{ item }}"
+          line: "{{ item }}"
+        loop:
+          - "zstyle ':omz:update' mode reminder"
+          - "zstyle ':omz:update' frequency 30"
+
+      - name: Install powerlevel10k LOL
+        git:
+          repo: https://github.com/romkatv/powerlevel10k.git
+          dest: "$HOME/.oh-my-zsh/custom/themes/powerlevel10k"
+          depth: 1
+
+      - name: Set ohmyzsh theme
+        lineinfile:
+          path: "$HOME/.zshrc"
+          regexp: "^ZSH_THEME"
+          line: ZSH_THEME="powerlevel10k/powerlevel10k"
+          
+      - name: Configure basic git aliases
+        copy:
+          dest: "$HOME/.gitconfig"
+          src: "files/dot-gitconfig"
+          mode: 0640
+      become: false      
+
+    - name: Configure sudo
+      copy:
+        dest: '/usr/local/etc/sudoers.d/wheel'
+        content: '%wheel ALL=(ALL) NOPASSWD: ALL'
+        owner: root
+        group: wheel
+        mode: 0600
+  

@@ -1,0 +1,18 @@
+---
+bsd:
+  vars:
+    ansible_python_intepreter: /usr/local/bin/python3
+    # Essentials :)
+    packages:
+      - curl
+      - freecolor
+      - git
+      - gmake
+      - rsync
+      - sudo
+      - the_silver_searcher
+      - tmux
+      - vim
+      - wget
+      - zsh
+  hosts: CHANGE-THIS-OF-COURSE.compute.amazonaws.com
