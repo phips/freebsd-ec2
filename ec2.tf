@@ -8,18 +8,21 @@ provider "aws" {
 # Find the AMI ID
 data "aws_ami" "freebsd" {
   most_recent = true
-
+  owners = ["aws-marketplace"]
   filter {
     name   = "name"
     values = ["FreeBSD*13.2*"]
   }
-
   filter {
     name   = "architecture"
     values = ["arm64"]
   }
-  
-  owners = ["aws-marketplace"]
+  # Want to do some testing with none stable releases?
+  #filter {
+  #  name   = "name"
+  #  values = ["FreeBSD*14.0-ALPHA2*ZFS"]
+  #}
+  # owners = ["782442783595"]  
 }
 
 #output "freebsd_ami_id" {
@@ -46,9 +49,9 @@ variable "root_disk" {
 
 # https://aws.amazon.com/marketplace/pp/prodview-csz7hkwk5a4ls
 # aws cli to find ami IDs:
-# aws ec2 describe-images --owners aws-marketplace --filters "Name=name,Values=*FreeBSD*" "Name=state,Values=available" "Name=architecture,Values=arm64" --query 'Images[*].{ID:ImageId, Name:Name}' --region eu-west-2
+# aws ec2 describe-images --filters "Name=name,Values=*FreeBSD*" "Name=state,Values=available" --region eu-west-2 --query 'sort_by(Images[*], &CreationDate)[*].{Architecture: Architecture, CreationDate: CreationDate, OwnerId: OwnerId, ImageId: ImageId, Name: Name}' --output table
 # also useful:
-# aws ec2 describe-instance-types --query "InstanceTypes[?starts_with(InstanceType, 't4g')].[InstanceType, MemoryInfo.SizeInMiB]" --output json | jq '.[] | [.[0], .[1] / 1024]' --region eu-west-2 
+# aws ec2 describe-instance-types  --region eu-west-2 --query "InstanceTypes[?starts_with(InstanceType, 't4g')].[InstanceType, MemoryInfo.SizeInMiB]" --output json | jq '.[] | [.[0], .[1] / 1024]'
 
 resource "aws_instance" "nodes" {
     # bump size on root disk
@@ -58,7 +61,6 @@ resource "aws_instance" "nodes" {
       volume_type = "gp2"
       delete_on_termination = true
     }
-
   count         = var.num
   ami           = data.aws_ami.freebsd.id
   instance_type = var.type

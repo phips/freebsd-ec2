@@ -91,3 +91,25 @@
         group: wheel
         mode: 0600
   
+    - name: sysrc changes (services, settings)
+      block:
+      - name: sysrc settings
+        community.general.sysrc:
+          name: "{{ item.name }}"
+          value: "{{ item.value }}"
+        loop:
+          - { name: 'postfix_enable', value: "YES" }
+          - { name: 'syslogd_flags', value: "-ss" }
+          - { name: 'sendmail_enable', value: "NO" }
+          - { name: 'jail_enable', value: "YES" }
+          - { name: 'sshd_dsa_enable', value: "no" }
+          - { name: 'sshd_ecdsa_enable', value: "no" }
+          - { name: 'sshd_ed25519_enable', value: "yes" }
+          - { name: 'sshd_rsa_enable', value: "yes" }
+
+      - name: Ensure postfix started
+        service:
+          name: postfix
+          state: started
+      when: ansible_distribution == 'FreeBSD' 
+      tags: services
