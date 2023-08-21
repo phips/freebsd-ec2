@@ -93,6 +93,10 @@
   
     - name: sysrc changes (services, settings)
       block:
+      - name: Ensure sendmail stopped
+        service:
+          name: sendmail
+          state: stopped
       - name: sysrc settings
         community.general.sysrc:
           name: "{{ item.name }}"
@@ -111,5 +115,9 @@
         service:
           name: postfix
           state: started
+      - name: Restart syslogd
+        service:
+          name: syslogd
+          state: restarted
       when: ansible_distribution == 'FreeBSD' 
       tags: services
