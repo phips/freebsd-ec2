@@ -25,6 +25,7 @@ data "aws_ami" "freebsd" {
   # owners = ["782442783595"]  
 }
 
+# Informational. Could comment this out if you want.
 output "freebsd_ami_id" {
   value = data.aws_ami.freebsd.id
 }
@@ -66,6 +67,14 @@ resource "aws_instance" "nodes" {
   ami           = data.aws_ami.freebsd.id
   instance_type = var.type
   key_name      = var.key
+  user_data     = <<-EOF
+#!/bin/sh
+echo 'firstboot_pkgs_list="python3"' >> /etc/rc.conf
+EOF
+  # don't force-recreate instance if only user data changes
+  lifecycle {
+    ignore_changes = [user_data]
+  }
 }
 
 # if you want to add an extra disk at a later point 

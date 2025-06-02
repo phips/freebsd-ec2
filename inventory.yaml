@@ -1,16 +1,17 @@
----
 bsd:
   vars:
-    ansible_python_intepreter: /usr/local/bin/python3
+    ansible_python_interpreter: /usr/local/bin/python3
     # Essentials :)
     packages:
       - curl
+      - doas
       - freecolor
       - git
       - gmake
+      - postfix
+      - ripgrep
       - rsync
-      - sudo
-      - the_silver_searcher
+      - starship
       - tmux
       - vim
       - wget
