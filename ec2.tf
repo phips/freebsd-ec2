@@ -8,10 +8,10 @@ provider "aws" {
 # Find the AMI ID
 data "aws_ami" "freebsd" {
   most_recent = true
-  owners = ["aws-marketplace"]
+  owners = ["782442783595"]
   filter {
     name   = "name"
-    values = ["FreeBSD*13.2*"]
+    values = ["FreeBSD*14.2-RELEASE*small*ZFS"]
   }
   filter {
     name   = "architecture"
@@ -25,11 +25,11 @@ data "aws_ami" "freebsd" {
   # owners = ["782442783595"]  
 }
 
-#output "freebsd_ami_id" {
-#  value = data.aws_ami.freebsd.id
-#}
+output "freebsd_ami_id" {
+  value = data.aws_ami.freebsd.id
+}
 
-# Variables. Create terraform.tf vars or pass --var var=VALUE to terraform apply
+# Variables. Create terraform.tfvars or pass --var var=VALUE to terraform apply
 variable "num" {
   default = 1
   description = "Number of ec2 instances to run"
@@ -50,6 +50,7 @@ variable "root_disk" {
 # https://aws.amazon.com/marketplace/pp/prodview-csz7hkwk5a4ls
 # aws cli to find ami IDs:
 # aws ec2 describe-images --filters "Name=name,Values=*FreeBSD*" "Name=state,Values=available" --region eu-west-2 --query 'sort_by(Images[*], &CreationDate)[*].{Architecture: Architecture, CreationDate: CreationDate, OwnerId: OwnerId, ImageId: ImageId, Name: Name}' --output table
+#
 # also useful:
 # aws ec2 describe-instance-types  --region eu-west-2 --query "InstanceTypes[?starts_with(InstanceType, 't4g')].[InstanceType, MemoryInfo.SizeInMiB]" --output json | jq '.[] | [.[0], .[1] / 1024]'
 
