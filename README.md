@@ -1,26 +1,23 @@
-# FreeBSD 13.2 ec2 bootstrap
+# FreeBSD 14.2 ec2 bootstrap
 
-Brings up FreeBSD 13.2 ARM instance on ec2. Defaults to t4g.micro (see [tfvars](terraform.tfvars)).
+Brings up FreeBSD 14.2 ARM instance on ec2. Defaults to t4g.micro (see [tfvars](terraform.tfvars)).
 
 ## Requirements
 
 If running from a Mac, just '[brew](https://brew.sh) install' these:
 
-* [terraform](https://developer.hashicorp.com/terraform/cli)
-* [ansible](https://docs.ansible.com/ansible/latest/index.html)
-* [jq](https://jqlang.github.io/jq/)
-* [yq](https://mikefarah.gitbook.io/yq/)
+- [terraform](https://developer.hashicorp.com/terraform/cli)
+- [ansible](https://docs.ansible.com/ansible/latest/index.html)
+- [jq](https://jqlang.github.io/jq/)
+- [yq](https://mikefarah.gitbook.io/yq/)
 
 ## Running
 
 ```
 $ terraform apply
-$ make bootstrap
 $ make inventory
 $ ./r
 ```
-
-`bootstrap` ssh's to the fresh instance and installs a Python, because the FreeBSD ec2 AMIs, by default, are very minimal.
 
 ## Ansible play
 
@@ -35,3 +32,4 @@ $ ./r -t pkgs
 Connecting to the running instance:
 
 `ssh $(make)`
+
