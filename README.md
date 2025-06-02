@@ -13,6 +13,9 @@ If running from a Mac, just '[brew](https://brew.sh) install' these:
 
 ## Running
 
+This assumes your AWS credentials are already configured.
+[There are multiple ways to do this](https://registry.terraform.io/providers/hashicorp/aws/latest/docs#authentication-and-configuration), choose your preferred method.
+
 ```
 $ terraform apply
 $ make inventory
@@ -32,4 +35,3 @@ $ ./r -t pkgs
 Connecting to the running instance:
 
 `ssh $(make)`
-
