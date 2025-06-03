@@ -5,6 +5,8 @@ bsd:
     packages:
       - curl
       - doas
+      - duf
+      - dust
       - freecolor
       - fzf
       - git
@@ -17,4 +19,4 @@ bsd:
       - wget
       - zoxide
       - zsh
-  hosts: CHANGE-THIS-OF-COURSE.compute.amazonaws.com
+  hosts: ec2-18-175-209-191.eu-west-2.compute.amazonaws.com

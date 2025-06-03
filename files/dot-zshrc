@@ -58,5 +58,5 @@ init_tool zoxide init zsh
 
 # aliases
 alias ez='nvim ~/.zshrc'
-alias zz='source ~/.zshrc'
+alias rz='source ~/.zshrc'
 

@@ -1,17 +1,18 @@
-- hosts: all
-  become: yes
+- name: "Configure hosts"
+  hosts: all
+  become: true
   become_method: su
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Wait for SSH access
       ansible.builtin.wait_for:
-        host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+        host: '{{ (ansible_ssh_host | default(ansible_host)) | default(inventory_hostname) }}'
         search_regex: OpenSSH
         port: 22
       vars:
         ansible_connection: local
         ansible_python_interpreter: auto_silent
-      become: no
+      become: false
     - name: Gather facts
       setup:
     - name: Save space on BSD
@@ -35,14 +36,20 @@
         dest: /usr/local/etc/zshrc
         owner: root
         group: wheel
-        mode: 0644
+        mode: '0644'
+    - name: Put a user zshrc in place
+      copy:
+        src: 'files/dot-zshrc'
+        dest: '$HOME/.zshrc'
+        mode: '0640'
+      become: false
     - name: Configure doas
       copy:
         dest: '/usr/local/etc/doas.conf'
         content: "permit nopass :wheel\n"
         owner: root
         group: wheel
-        mode: 0400
+        mode: '0400'
     - name: Ensure sendmail stopped
       service:
         name: sendmail
