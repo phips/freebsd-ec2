@@ -1,19 +1,20 @@
 bsd:
   vars:
     ansible_python_interpreter: /usr/local/bin/python3
-    # Essentials :)
+    # daily driver essentials :)
     packages:
       - curl
       - doas
       - freecolor
+      - fzf
       - git
       - gmake
+      - neovim
       - postfix
       - ripgrep
-      - rsync
       - starship
       - tmux
-      - vim
       - wget
+      - zoxide
       - zsh
   hosts: CHANGE-THIS-OF-COURSE.compute.amazonaws.com
