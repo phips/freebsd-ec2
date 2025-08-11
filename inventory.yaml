@@ -19,4 +19,4 @@ bsd:
       - wget
       - zoxide
       - zsh
-  hosts: ec2-18-175-209-191.eu-west-2.compute.amazonaws.com
+  hosts: CHANGE-THIS-OF-COURSE.compute.amazonaws.com
